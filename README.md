@@ -1,2 +1,2 @@
 # Thermal_Camera
-Thermal Imaging Security Improvement System with AMG8833
+Security Improvement using AMG8833 Thermal Imaging System.
