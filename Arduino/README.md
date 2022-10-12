@@ -1,5 +1,5 @@
 # Thermal_Camera
-Security Improvement using AMG8833 Thermal Imaging System.
+Security Improvement using AMG8833-Arduino Thermal Imaging System.
 Requirements 
 1. AMG88xxx Camera
 2. Aruino Board
