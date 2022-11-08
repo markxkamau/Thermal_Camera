@@ -4,6 +4,7 @@ import adafruit_mlx90640
 import board
 import busio
 import math
+from gpiozero import Buzzer
 
 i2c = busio.I2C(board.SCL, board.SDA, frequency=800000)
 
@@ -18,10 +19,13 @@ frame = [0] * 768
 scalling = 60  # used to smoothen the image as to more exact figures
 width = scalling * 10
 height = scalling * 8
+buzzer = Buzzer(23)
+
+camera = Buzzer(17)
 Matrix = [[0 for x in range(24)] for y in range(32)]
 
 face_cascade = cv2.CascadeClassifier( cv2.data.haarcascades + 'haarcascade_frontalface_alt2.xml')
-
+# data/haarcascades/haarcascade_frontalface_alt.xml
 # 1.Collect data from the thermal camera(32*24)
 def camera_reading():
     for h in range(24):
@@ -39,9 +43,9 @@ while True:
 
     # 2.Visualise the data using computer vision
     # read data from serial port
-    data = camera_reading()
+    # data = camera_reading()
     # reshape data into matrix
-    output = np.reshape(data, (32, 24))
+    output = np.reshape(frame, (24, 32))
 
         # scaling
     minValue = math.floor(np.amin(output))
@@ -51,11 +55,12 @@ while True:
 
     # 3.Interpolation of the live image for smooth images
     dim = (width, height)
-    output = cv2.resize(output, dim, interpolation=cv2.INTER_CUBIC)
+    output = cv2.resize(output, dim, interpolation=cv2.INTER_LANCZOS4)
 
         # apply colormap
     imgGray = output.astype(np.uint8)
-    img = cv2.applyColorMap(imgGray, cv2.COLORMAP_OCEAN)
+    img = cv2.applyColorMap(imgGray, cv2.COLORMAP_MAGMA)
+
 
         # process the img gray searching for human using haarcascade
     image_gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
@@ -71,6 +76,8 @@ while True:
         for (x, y, w, h) in face:
             cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 5)
             # set off the alarm alerting the resident
+            buzzer.beep()
+            camera.off()
         cv2.imwrite("Threat.jpg", img)
 
         # put min/max text on image
@@ -80,6 +87,8 @@ while True:
     image = cv2.putText(img, text, org, font, 1,
                             (255, 255, 255), 2, cv2.LINE_AA)
         # keep the alarm off unless threat is detected
+    buzzer.off()
+    camera.on()
 
     cv2.waitKey(50)
 
