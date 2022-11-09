@@ -59,6 +59,7 @@ def declare_inside():
     while True:
         mlx.getFrame(frame)
         img = visualization(frame)
+        cv2.line(img, point_a, point_b, (255, 0, 255), 1)
         cv2.imshow('Internal Declaration', img)
         cv2.setMouseCallback('Internal Declaration', click_event)
         if cv2.waitKey(1) == ord('q'):
@@ -204,7 +205,7 @@ while True:
                 print("Threat on the outside")
                 camera.off()
 
-    cv2.line(img, point_a, point_b, (255, 0, 255), 5)
+    cv2.line(img, point_a, point_b, (255, 0, 255), 2)
     cv2.imshow('custom window', img)
     buzzer.off()
     camera.on()
