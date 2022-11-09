@@ -47,22 +47,20 @@ def click_event(event, x, y, flags, params):
 def declare_border():
     while True:
         mlx.getFrame(frame)
-        image = np.reshape(frame, (24, 32))
-        np.fliplr(image)
-
-        minValue = math.floor(np.amin(image))
-        maxValue = math.ceil(np.amax(image))
-        image = image - minValue
-        image = image * 255 / (maxValue - minValue)  # Now scaled to 0 - 255
-
-        image = cv2.resize(image, (1000, 750),
-                           interpolation=cv2.INTER_LANCZOS4)
-
-        imgGray = image.astype(np.uint8)
-
-        img = cv2.applyColorMap(imgGray, cv2.COLORMAP_MAGMA)
+        img = visualization(frame)
         cv2.imshow('Border Declaration', img)
         cv2.setMouseCallback('Border Declaration', click_event)
+        if cv2.waitKey(1) == ord('q'):
+            break
+
+
+def declare_inside():
+    print("Left-Click on where the property interior is")
+    while True:
+        mlx.getFrame(frame)
+        img = visualization(frame)
+        cv2.imshow('Internal Declaration', img)
+        cv2.setMouseCallback('Internal Declaration', click_event)
         if cv2.waitKey(1) == ord('q'):
             break
 
@@ -126,12 +124,43 @@ def line_points(gradient, y, x):
     return x_value, y_value
 
 
-def identification():
-    return
+def identification(image):
+
+    frame_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    face = face_cascade.detectMultiScale(frame_gray)
+    return face
 
 
-def location():
-    return
+def location(center, gradient, c, start):
+    if start[1] < value_y(gradient, start[0], c):
+        if center[1] < value_y(gradient, center[0], c):
+            return True
+        elif center[1] > value_y(gradient, center[0], c):
+            return False
+    else:
+        if center[1] > value_y(gradient, center[0], c):
+            return True
+        elif center[1] < value_y(gradient, center[0], c):
+            return False
+
+
+def visualization(frame):
+    image = np.reshape(frame, (24, 32))
+    np.fliplr(image)
+
+    minValue = math.floor(np.amin(image))
+    maxValue = math.ceil(np.amax(image))
+    image = image - minValue
+    image = image * 255 / (maxValue - minValue)  # Now scaled to 0 - 255
+
+    image = cv2.resize(image, (1000, 750), interpolation=cv2.INTER_LANCZOS4)
+
+    imgGray = image.astype(np.uint8)
+
+    img = cv2.applyColorMap(imgGray, cv2.COLORMAP_MAGMA)
+
+    return img
 
 
 # =========================================
@@ -150,39 +179,35 @@ point_a, point_b = line_points(
     gradient, y_intercept(gradient, start),
     x_intercept(gradient, y_intercept(gradient, start)))
 
+declare_inside()
+
+cv2.destroyAllWindows()
+
 while True:
 
     mlx.getFrame(frame)
-    image = np.reshape(frame, (24, 32))
-    np.fliplr(image)
 
-    minValue = math.floor(np.amin(image))
-    maxValue = math.ceil(np.amax(image))
-    image = image - minValue
-    image = image * 255 / (maxValue - minValue)  # Now scaled to 0 - 255
+    img = visualization(frame)
 
-    image = cv2.resize(image, (1000, 750), interpolation=cv2.INTER_LANCZOS4)
+    face = identification(img)
 
-    imgGray = image.astype(np.uint8)
-
-    img = cv2.applyColorMap(imgGray, cv2.COLORMAP_MAGMA)
-
-    frame_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-    face = face_cascade.detectMultiScale(frame_gray)
-    body = classifier.detectMultiScale(frame_gray)
     if len(face) != 0:
         print("Faces found:", len(face))
         for (x, y, w, h) in face:
             cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 5)
             center = [(x + w) / 2, (y + h) / 2]
-            print("Point: ", center)
-        # buzzer.on()
-        # camera.off()
+            if location(center, gradient, y_intercept(gradient, stop), start):
+                print("Threat in territory")
+                buzzer.on()
+                camera.off()
+            else:
+                print("Threat on the outside")
+                camera.off()
+
     cv2.line(img, point_a, point_b, (255, 0, 255), 5)
     cv2.imshow('custom window', img)
-    # buzzer.off()
-    # camera.on()
+    buzzer.off()
+    camera.on()
 
     cv2.waitKey(50)
 # =========================================
