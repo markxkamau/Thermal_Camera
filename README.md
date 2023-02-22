@@ -29,10 +29,6 @@ These projects are aimed at improving security using thermal imaging systems.
 - Run the Python script and observe the thermal images displayed on the screen.
 - Test the system by exposing it to different temperatures and observing how the thermal images change.
 
-### Contributors
-- John Doe
-- Jane Doe
-
 ## Project 2: AMG8833-Arduino Thermal Imaging System
 
 ### Requirements 
@@ -59,6 +55,9 @@ These projects are aimed at improving security using thermal imaging systems.
 10. Connect to the ESP32-Cam's Wi-Fi network using a mobile device or computer
 11. Navigate to the ESP32-Cam's IP address using a web browser
 12. Observe the thermal images displayed on the screen
+
+### Contributors
+- [Mark Kamau](https://github.com/markxkamau) - author
 
 ### Testing
 - Test the system by exposing it to different temperatures and observing how the thermal images change.
