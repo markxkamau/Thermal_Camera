@@ -64,10 +64,6 @@ These projects are aimed at improving security using thermal imaging systems.
 - Test the system by exposing it to different temperatures and observing how the thermal images change.
 - Test the buzzer by exposing the system to high temperatures and observing the buzzer sound.
 
-### Contributors
-- John Smith
-- Jane Smith
-
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
@@ -117,9 +113,7 @@ Additionally, you'll need to have the following software installed:
 
 ## Contributors
 
-- [Your Name](https://github.com/your-github-username) - author
-- [Contributor 1](https://github.com/contributor-1-username)
-- [Contributor 2](https://github.com/contributor-2-username)
+- [Mark Kamau](https://github.com/markxkamau) - author
 
 ## License
 
